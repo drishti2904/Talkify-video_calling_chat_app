@@ -13,49 +13,38 @@ const app = express();
 const PORT = process.env.PORT || 5001;
 const CLIENT_URL = process.env.CLIENT_URL;
 
-//  List of allowed origins
-const allowedOrigins = [
-  "http://localhost:5173",
-  CLIENT_URL, 
-];
-
-//  CORS middleware
+// ✅ For flexible public access (replace this in production if needed)
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
+  origin: true,        // allows any origin
+  credentials: true,   // allows cookies (important for auth)
 }));
 
-// Preflight support
+// ✅ Preflight CORS support
 app.options("*", cors());
 
-// Other middlewares
+// ✅ Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// Routes
+// ✅ Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 
-// Root route to avoid 404 on base URL
+// ✅ Root route
 app.get("/", (req, res) => {
   res.send("Talkify API is running.");
 });
 
-// Catch-all 404 handler for unknown routes
+// ✅ 404 Catch-all route
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
 });
 
-// Connect DB and start server
+// ✅ Start server
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(` Server running on port ${PORT}`);
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`🌐 API available at: http://localhost:${PORT} or Render URL`);
   });
 });
