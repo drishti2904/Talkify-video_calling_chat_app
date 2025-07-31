@@ -11,13 +11,11 @@ import { connectDB } from "./lib/db.js";
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-
-
 const CLIENT_URL = process.env.CLIENT_URL;
 
 // Middleware
 app.use(cors({
-  origin: CLIENT_URL, 
+  origin: CLIENT_URL,
   credentials: true,
 }));
 app.use(express.json());
@@ -27,6 +25,11 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
+
+// ✅ Root Route (fixes 404 on Render root)
+app.get("/", (req, res) => {
+  res.send("Talkify API is running.");
+});
 
 // Connect to DB and start server
 connectDB().then(() => {
